@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Constraint-Decomposed Impedance Control from Generative Policy</title>
+  <meta name="description" content="Constraint-Decomposed Impedance Control from Generative Policy for Articulated Object Manipulation (CoRL 2026). A generative policy's trajectory ensemble reveals which motion directions an articulated object allows; the controller stays stiff along them and compliant elsewhere.">
+  <meta property="og:title" content="Constraint-Decomposed Impedance Control from Generative Policy">
+  <meta property="og:description" content="CoRL 2026 (Spotlight). Impedance gains from the trajectory ensemble of a generative policy for articulated object manipulation.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://erickun0125.github.io/constraint-decomposed-impedance/">
+  <meta property="og:image" content="https://erickun0125.github.io/constraint-decomposed-impedance/static/img/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Constraint-Decomposed Impedance Control from Generative Policy">
+  <meta name="twitter:description" content="CoRL 2026 (Spotlight). Impedance gains from the trajectory ensemble of a generative policy for articulated object manipulation.">
+  <meta name="twitter:image" content="https://erickun0125.github.io/constraint-decomposed-impedance/static/img/og.jpg">
+  <link rel="icon" href="static/img/favicon.svg?v=6856c5e2" type="image/svg+xml">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <link rel="stylesheet" href="static/css/style.css?v=b4fad526">
+  <script type="importmap">
+    { "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/" } }
+  </script>
+</head>
+<body>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="#top">CoRL 2026 · Spotlight</a>
+    <div class="navlinks">
+      <a href="#method">Method</a>
+      <a href="#simulation">Simulation</a>
+      <a href="#real">Real World</a>
+      <a href="#bibtex">BibTeX</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <h1 class="title">Constraint-Decomposed Impedance Control<br>from Generative Policy for<br>Articulated Object Manipulation</h1>
+    <p class="authors">
+      <span>Kyungseo Park</span>
+      <span>Byeongdo Lim</span>
+      <span>Jungbin Lim</span>
+      <span>Minseok Choi</span>
+      <span>Frank C. Park</span>
+    </p>
+    <p class="affil">Seoul National University</p>
+    <p class="venue"><span class="venue-name">Conference on Robot Learning (CoRL) 2026</span><span class="venue-tag">Spotlight</span></p>
+
+    <div class="buttons">
+      <a class="btn is-placeholder" href="#" aria-disabled="true" title="Coming soon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h9l5 5v15H6z M14 2v6h6" /></svg>Paper</a>
+      <a class="btn is-placeholder" href="#" aria-disabled="true" title="Coming soon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z M8 9h8 M8 13h8 M8 17h5" /></svg>arXiv</a>
+      <a class="btn is-placeholder" href="#" aria-disabled="true" title="Coming soon">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7l-5 5 5 5 M16 7l5 5-5 5 M14 4l-4 16" /></svg>Code</a>
+      <a class="btn" href="#video">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3z M10 9l5 3-5 3z" /></svg>Video</a>
+    </div>
+  </div>
+
+  <div class="wrap wide">
+    <figure class="teaser">
+      <div class="video-frame-wrap">
+        <video class="teaser-video" autoplay muted loop playsinline preload="auto"
+               poster="static/videos/teaser_poster.webp?v=91b8746f">
+          <source src="static/videos/teaser.mp4?v=ac5a9642" type="video/mp4">
+        </video>
+      </div>
+      <figcaption class="tldr">
+        From one observation, sample a trajectory ensemble from a generative policy: the spread of its trajectories
+        reveals which motions the articulated object allows. We stay <span class="c-feas">stiff along those directions</span>
+        and become <span class="c-cons">compliant along the constrained ones</span>.
+      </figcaption>
+    </figure>
+  </div>
+</header>
+
+<main>
+
+<section class="sec" id="abstract">
+  <div class="wrap narrow">
+    <h2>Abstract</h2>
+    <p class="abstract">
+      Articulated object manipulation tasks such as opening doors, tightening bolts, and pulling drawers, impose kinematic constraints on a robot end-effector's motion that neural policies may fail to satisfy. Unlike hybrid force-position control that strictly separates force and position control into orthogonal subspaces, impedance control modulates a mechanical impedance system in the form of a virtual inertia, damping, and stiffness. However, selecting task-appropriate impedance gains remains challenging for robot policies. In this paper, we address this problem for the case of manipulating articulated objects. Our constraint-decomposed impedance control method uses the sampling diversity of a generative policy to estimate the feasible motion directions in twist space. The key idea is to infer the feasible and constrained subspaces of twists from an ensemble of trajectories generated by the policy from the same observation. Principal component analysis (PCA) of the end-effector twists determines the feasible twist subspace, which is then used to form 6&nbsp;&times;&nbsp;6 impedance gain matrices.
+    </p>
+    <p class="abstract">
+      For many common articulated objects, the feasible twist subspace is independent of the object configuration, so the subspace and resulting gains are estimated once and held fixed during manipulation, minimizing computational overhead. For less common cases where this independence does not hold, we instead estimate a configuration-independent twist subspace of higher dimension that contains the local feasible subspaces, allowing the same fixed-gain strategy to be used.
+    </p>
+    <p class="abstract">
+      Experiments across simulated and real-world single- and multi-DoF objects show that the proposed method consistently reduces constraint-violating contact loads relative to isotropic impedance control while maintaining task execution.
+    </p>
+  </div>
+</section>
+
+<section class="sec tinted" id="video">
+  <div class="wrap">
+    <h2>Video</h2>
+    <div class="video-frame-wrap">
+      <video controls preload="metadata" playsinline poster="static/videos/project_video_poster.webp?v=dd0297aa">
+        <source src="static/videos/project_video.mp4?v=a37d7926" type="video/mp4">
+      </video>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="method">
+  <div class="wrap">
+    <h2>Method</h2>
+    <p class="lead">
+      When a policy's trajectory slightly violates the object's kinematic constraint, tracking it stiffly in every
+      direction produces large contact and internal forces. The question is not only <em>how stiff</em>, but <em>which directions</em> should be stiff.
+      We read the answer from the policy itself.
+    </p>
+
+    <figure class="fig">
+      <img src="static/img/pipeline_overview.webp?v=d320042b" alt="Pipeline: trajectory generation, twist extraction and stacking, weighted PCA and projection, decomposed impedance" loading="lazy">
+    </figure>
+
+    <ol class="steps">
+      <li>
+        <span class="step-no">1</span>
+        <h3>Trajectory ensemble</h3>
+        <p>At grasp closure, the diffusion policy samples <i>N</i> trajectories from the same observation.</p>
+      </li>
+      <li>
+        <span class="step-no">2</span>
+        <h3>Twists</h3>
+        <p>Consecutive poses of each sample give end-effector body twists, stacked into
+        $W \in \mathbb{R}^{6\times NH}$.</p>
+      </li>
+      <li>
+        <span class="step-no">3</span>
+        <h3>Feasible subspace</h3>
+        <p>Weighted, uncentered PCA of the twists gives the feasible twist subspace $U_\parallel$.</p>
+      </li>
+      <li>
+        <span class="step-no">4</span>
+        <h3>Decomposed gains</h3>
+        <p>Impedance gains stay stiff along $U_\parallel$ and become compliant along its complement:
+        $K_v = \bar\Lambda\,(k_\parallel P_\parallel + k_\perp P_\perp)$.</p>
+      </li>
+    </ol>
+
+    <figure class="ens-gallery">
+      <div class="ens-row-label">Simulation</div>
+      <div class="ens-grid">
+        <div><img src="static/img/sim_ensemble_revolute.webp?v=12f735e1" alt="Revolute: trajectory ensemble at grasp closure" loading="lazy"><span>Revolute</span></div>
+        <div><img src="static/img/sim_ensemble_cylindrical.webp?v=44c65b0b" alt="Cylindrical: trajectory ensemble at grasp closure" loading="lazy"><span>Cylindrical</span></div>
+        <div><img src="static/img/sim_ensemble_planar.webp?v=1eea95a3" alt="Planar: trajectory ensemble at grasp closure" loading="lazy"><span>Planar</span></div>
+        <div><img src="static/img/sim_ensemble_u_joint.webp?v=9c0f6215" alt="Universal: trajectory ensemble at grasp closure" loading="lazy"><span>Universal</span></div>
+      </div>
+      <div class="ens-row-label">Real robot</div>
+      <div class="ens-grid real">
+        <div><img src="static/img/real_ensemble_revolute.webp?v=fff63ac1" alt="Laptop: trajectory ensemble at grasp closure" loading="lazy"><span>Revolute</span></div>
+        <div><img src="static/img/real_ensemble_prismatic.webp?v=a25c6a1a" alt="Drawer: trajectory ensemble at grasp closure" loading="lazy"><span>Prismatic</span></div>
+        <div><img src="static/img/real_ensemble_helical.webp?v=3f8a0767" alt="Screw: trajectory ensemble at grasp closure" loading="lazy"><span>Helical</span></div>
+        <div><img src="static/img/real_ensemble_cylindrical.webp?v=f69402ac" alt="Phone stand: trajectory ensemble at grasp closure" loading="lazy"><span>Cylindrical</span></div>
+        <div><img src="static/img/real_ensemble_crank.webp?v=1c690db0" alt="Coffee grinder: trajectory ensemble at grasp closure" loading="lazy"><span>Crank</span></div>
+      </div>
+    </figure>
+
+    <div class="facts">
+      <div class="fact"><span class="fact-num">No separate model</span><span class="fact-label">no separate perception module, physical probing, or prior object kinematic model</span></div>
+      <div class="fact"><span class="fact-num">Once</span><span class="fact-label">estimated at grasp closure and held fixed during manipulation</span></div>
+      <div class="fact"><span class="fact-num">70.1&nbsp;ms</span><span class="fact-label">median time to sample 128 trajectories and build the gains (RTX&nbsp;5070&nbsp;Ti)</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec tinted" id="simulation">
+  <div class="wrap">
+    <h2>Simulation: Step Through a Rollout</h2>
+    <p class="lead">
+      Four articulated objects in Isaac Sim, manipulated by a flying gripper. Every controller runs the same
+      Diffusion Policy: <span class="c-iso">Iso</span> uses isotropic impedance, <span class="c-ours">Ours</span> lowers
+      the impedance only along the estimated constrained complement, and <span class="c-oracle">Oracle</span> uses the same
+      decomposition with the analytic subspace (simulation only).
+    </p>
+
+    <div class="viewer" id="viewer">
+      <div class="viewer-head">
+        <p class="viewer-sub">A representative trial per object (median Ours/Iso force-impulse ratio), replayed from the recorded states.
+        Drag to orbit, scroll to zoom.</p>
+        <div class="seg" role="tablist" aria-label="Object">
+          <button data-task="revolute" aria-selected="true">Revolute</button>
+          <button data-task="cylindrical" aria-selected="false">Cylindrical</button>
+          <button data-task="planar" aria-selected="false">Planar</button>
+          <button data-task="u_joint" aria-selected="false">Universal</button>
+        </div>
+      </div>
+      <div class="viewer-stage">
+        <canvas id="v-canvas" aria-label="3D view of the recorded rollout"></canvas>
+        <div class="viewer-gains" id="v-gains"></div>
+        <div class="viewer-spec" id="v-spec"></div>
+        <div class="viewer-loading">Loading 3D scene&hellip;</div>
+      </div>
+      <div class="viewer-steps five" role="tablist" aria-label="Pipeline step">
+        <button data-step="1" aria-selected="true"><span>1</span>Grasp</button>
+        <button data-step="2" aria-selected="false"><span>2</span>Sample</button>
+        <button data-step="2.5" aria-selected="false"><span>3</span>Twists &amp; PCA</button>
+        <button data-step="3" aria-selected="false"><span>4</span>Impedance gains</button>
+        <button data-step="4" aria-selected="false"><span>5</span>Execute</button>
+      </div>
+      <p class="viewer-caption" id="v-caption"></p>
+      <div class="viewer-exec">
+        <div class="exec-controls">
+          <button class="icon-btn" id="v-play" title="Play / pause" aria-label="Play or pause">&#9654;&#10074;&#10074;</button>
+          <input type="range" id="v-scrub" min="0" max="1" step="0.001" value="0" aria-label="Timeline">
+          <span class="v-time" id="v-time"></span>
+        </div>
+        <div id="v-plot" class="v-plot"></div>
+      </div>
+
+    </div>
+
+    <div class="chart-block">
+      <h3>Ours relative to Iso <span class="sub">constraint-violating load, mean over the trials in which all three controllers succeed</span></h3>
+      <div class="table-scroll plain" id="sim-ratio-table"></div>
+      <p class="rt-key"><span class="key-item"><i class="key-sw iso"></i>Iso (= 1.0)</span><span class="key-item"><i class="key-sw ours"></i>Ours, relative to Iso</span><span class="key-item"><i class="key-sw over"></i>above Iso</span>
+      <span>Under each bar: mean load, Iso &rarr; Ours.</span> The highlighted row follows the 3D view.</p>
+      <p class="note">
+        Ours lowers the force impulse to 0.13&ndash;0.37&times; and the peak force to 0.18&ndash;0.46&times; of Iso, recovering
+        at least 90% of Oracle's reduction in both. A single multi-task policy trained on all four objects shows the
+        same trend (0.14&ndash;0.37&times; and 0.20&ndash;0.49&times;).
+      </p>
+    </div>
+
+    <details class="table-details">
+      <summary>Full simulation table</summary>
+      <div class="table-scroll" id="sim-table"></div>
+      <p class="note">Triples are Iso / Ours / Oracle. SR counts all 100 trials; other entries are means over the trials
+      in which all three controllers succeed. SE is reported for Ours. Dashes: the universal joint has no constrained rotation.</p>
+    </details>
+  </div>
+</section>
+
+<section class="sec" id="real">
+  <div class="wrap">
+    <h2>Real World</h2>
+    <p class="lead">
+      A Franka Research 3 manipulates five objects: four single-joint objects and a coffee grinder whose crank has a
+      configuration-dependent feasible subspace.
+    </p>
+
+    <div class="real-grid">
+      <figure class="real-card"><div class="real-media" data-clip="revolute"><span class="real-step">Grasping</span><video muted playsinline preload="auto" poster="static/videos/real_revolute_poster.webp?v=a2405b13"><source src="static/videos/real_revolute.mp4?v=2ee94154" type="video/mp4"></video></div><figcaption><b>Laptop</b><span>Revolute</span></figcaption></figure>
+      <figure class="real-card"><div class="real-media" data-clip="prismatic"><span class="real-step">Grasping</span><video muted playsinline preload="auto" poster="static/videos/real_prismatic_poster.webp?v=6bbfc29f"><source src="static/videos/real_prismatic.mp4?v=e423938e" type="video/mp4"></video></div><figcaption><b>Drawer</b><span>Prismatic</span></figcaption></figure>
+      <figure class="real-card"><div class="real-media" data-clip="helical"><span class="real-step">Grasping</span><video muted playsinline preload="auto" poster="static/videos/real_helical_poster.webp?v=ac53984e"><source src="static/videos/real_helical.mp4?v=dfdbb624" type="video/mp4"></video></div><figcaption><b>Screw</b><span>Helical</span></figcaption></figure>
+      <figure class="real-card"><div class="real-media" data-clip="cylindrical"><span class="real-step">Grasping</span><video muted playsinline preload="auto" poster="static/videos/real_cylindrical_poster.webp?v=702f0bc5"><source src="static/videos/real_cylindrical.mp4?v=273b1d8c" type="video/mp4"></video></div><figcaption><b>Phone stand</b><span>Cylindrical</span></figcaption></figure>
+      <figure class="real-card"><div class="real-media" data-clip="crank"><span class="real-step">Grasping</span><video muted playsinline preload="auto" poster="static/videos/real_crank_poster.webp?v=e59019e0"><source src="static/videos/real_crank.mp4?v=fe59f362" type="video/mp4"></video></div><figcaption><b>Coffee grinder</b><span>Crank</span></figcaption></figure>
+    </div>
+
+    <div class="chart-block">
+      <h3>Ours relative to Iso <span class="sub">constraint-violating load, mean over 10 rollouts per controller</span></h3>
+      <div class="table-scroll plain" id="real-ratio-table"></div>
+      <p class="rt-key"><span class="key-item"><i class="key-sw iso"></i>Iso (= 1.0)</span><span class="key-item"><i class="key-sw ours"></i>Ours, relative to Iso</span><span class="key-item"><i class="key-sw over"></i>above Iso</span>
+      <span>Under each bar: mean load, Iso &rarr; Ours.</span>
+      <span>&dagger;&nbsp;Prismatic has no feasible rotation, so its moments are the full moment. &Dagger;&nbsp;Prismatic excluded.</span></p>
+      <p class="note">
+        On the crank the improvement is smaller: the fixed envelope contains directions that are constrained at the
+        current configuration, and the force impulse rises to 1.14&times; while the other three loads still decrease.
+      </p>
+    </div>
+
+    <details class="table-details">
+      <summary>Full real-world table</summary>
+      <div class="table-scroll" id="real-table"></div>
+      <p class="note">Entries are Iso / Ours (Ours/Iso), averaged over the rollouts. SE is reported for Ours.
+      &dagger;&nbsp;Prismatic has no feasible rotation, so ICM and PCM measure the full moment.</p>
+    </details>
+  </div>
+</section>
+
+<section class="sec tinted" id="bibtex">
+  <div class="wrap narrow">
+    <h2>BibTeX</h2>
+    <div class="bib">
+      <button class="copy" type="button" data-copy="#bib-text">Copy</button>
+<pre id="bib-text">@inproceedings{park2026constraint,
+  title     = {Constraint-Decomposed Impedance Control from Generative Policy
+               for Articulated Object Manipulation},
+  author    = {Park, Kyungseo and Lim, Byeongdo and Lim, Jungbin and
+               Choi, Minseok and Park, Frank C.},
+  booktitle = {Conference on Robot Learning (CoRL)},
+  year      = {2026}
+}</pre>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <p>Seoul National University &middot; CoRL 2026 Spotlight</p>
+  </div>
+</footer>
+
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+<script defer src="static/js/data.js?v=49f1bc2e"></script>
+<script defer src="static/js/main.js?v=50fbb4ff"></script>
+<script type="module" src="static/js/viewer.js?v=c3d9dc7e"></script>
+</body>
+</html>

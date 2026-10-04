@@ -1,0 +1,47 @@
+{
+ "fps": 30,
+ "total_s": 20.333,
+ "clips": {
+  "revolute": {
+   "grasp_s": 3.029,
+   "overlay_start_s": 3.533,
+   "overlay_end_s": 9.133,
+   "frames": 610,
+   "seconds": 20.333
+  },
+  "prismatic": {
+   "grasp_s": 3.089,
+   "overlay_start_s": 3.533,
+   "overlay_end_s": 9.133,
+   "frames": 610,
+   "seconds": 20.333
+  },
+  "helical": {
+   "grasp_s": 3.524,
+   "overlay_start_s": 3.533,
+   "overlay_end_s": 9.133,
+   "frames": 610,
+   "seconds": 20.333
+  },
+  "cylindrical": {
+   "grasp_s": 3.302,
+   "overlay_start_s": 3.533,
+   "overlay_end_s": 9.133,
+   "frames": 610,
+   "seconds": 20.333
+  },
+  "crank": {
+   "grasp_s": 0.01,
+   "overlay_start_s": 3.533,
+   "overlay_end_s": 9.133,
+   "frames": 610,
+   "seconds": 20.333
+  }
+ },
+ "phases_s": {
+  "grasping_end": 3.533,
+  "ensemble_end": 9.133,
+  "rollout_end": 19.333,
+  "total": 20.333
+ }
+}
