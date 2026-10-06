@@ -80,6 +80,8 @@ a:hover { text-decoration: underline; }
 }
 .authors { margin: 0; font-size: 18px; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 22px; }
 .authors span { color: var(--ink); font-weight: 500; }
+.authors a { color: inherit; }
+.authors a:hover { color: var(--ours); }
 .affil { margin: 6px 0 18px; color: var(--muted); font-size: 16px; }
 
 .buttons { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 44px; }
