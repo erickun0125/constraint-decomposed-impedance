@@ -37,7 +37,7 @@ const SPAN_TEXT = {
 const STEP_TEXT = {
   1: "The gripper has just closed on the handle. Ours now samples the policy many times from this one observation.",
   2: "The sampled trajectories differ mostly along the directions the object allows.",
-  3: (t) => `PCA of their twists gives the feasible subspace. The impedance gains are 6×6 matrices on twists: high along this subspace and low (×0.1) along its complement. They are not block-diagonal, since a feasible direction can couple rotation and translation (as for a handle moving on an arc). For display only, the view draws the linear part (blue) and the angular part (purple) of the subspace separately at the TCP and leaves out this rotation–translation coupling. ${SPAN_TEXT[t]}`,
+  3: (t) => `PCA of their twists gives the feasible subspace. The impedance gains are 6×6 matrices on twists: high along this subspace and low along its complement (stiffness ×0.1). They are not block-diagonal, since a feasible direction can couple rotation and translation (as for a handle moving on an arc). For display only, the view draws the linear part (blue) and the angular part (purple) of the subspace separately at the TCP and leaves out this rotation–translation coupling. ${SPAN_TEXT[t]}`,
   4: "Ours executes with these gains held fixed in the TCP frame; faded copies mark earlier poses. The plot compares the constraint-violating force of Iso, Ours, and Oracle on this same trial.",
 };
 
@@ -297,7 +297,7 @@ const RANK_WORD = { v: ["", "a line", "a plane", "all directions"], w: ["", "one
 function drawLegend(c) {
   const S = c.data.span;
   const item = (k, name) => `<button class="g-item" data-part="${k}" aria-pressed="${showPart[k]}"><i style="background:#${new THREE.Color(SPAN_COL[k]).getHexString()}"></i>${name}<span>rank ${S[k].rank} · ${RANK_WORD[k][S[k].rank]}</span></button>`;
-  legendEl.innerHTML = `<div class="g-title">High-gain (feasible) twist subspace</div><div class="g-sub">shown at the TCP, split for display into</div>${item("v", "Linear part")}${item("w", "Angular part")}<div class="g-sub">Complement: low gain (×0.1)</div>`;
+  legendEl.innerHTML = `<div class="g-title">High-gain (feasible) twist subspace</div><div class="g-sub">shown at the TCP, split for display into</div>${item("v", "Linear part")}${item("w", "Angular part")}<div class="g-sub">Complement: low gain (stiffness ×0.1)</div>`;
   legendEl.querySelectorAll("[data-part]").forEach((b) => b.addEventListener("click", () => {
     const k = b.dataset.part;
     showPart[k] = !showPart[k];

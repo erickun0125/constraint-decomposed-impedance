@@ -83,6 +83,8 @@ a:hover { text-decoration: underline; }
 .authors a { color: inherit; }
 .authors a:hover { color: var(--ours); }
 .affil { margin: 6px 0 18px; color: var(--muted); font-size: 16px; }
+.affil-note { display: block; margin-top: 3px; font-size: 13px; }
+.authors sup, .affil-note sup { font-size: 0.7em; margin-left: 1px; }
 
 .buttons { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 44px; }
 .btn {
