@@ -249,6 +249,7 @@ table.data b { color: var(--ours); font-weight: 500; }
 .limits li { margin-bottom: 10px; }
 
 /* bibtex */
+.bib-note { margin: 0 0 14px; }
 .bib { position: relative; }
 .bib pre {
   margin: 0; padding: 20px 22px; overflow-x: auto;
